@@ -3,34 +3,25 @@ services:
   service-api:
     build:
       context: ../../Downloads/SnoozBackendApis-master
-      dockerfile: ../../Downloads/SnoozBackendApis-master/docker/service-api.dev.Dockerfile
+      dockerfile: ../../Downloads/SnoozBackendApis-master/docker/api.dev.Dockerfile
     ports:
       - "8080:8080"
     env_file:
       - .env
     environment:
-      - REDIS_HOST=redis
       - POSTGRES_HOST=postgres
-      - SERVICE_API_PORT=8080
+      - API_PORT=8080
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=postgres
     depends_on:
-      - redis
       - postgres
     networks:
-      - snooz-network
+      - api-network
     volumes:
       - .:/app
-
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    networks:
-      - snooz-network
 
   postgres:
     image: postgres:latest
@@ -41,13 +32,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - snooz_backend:/var/lib/postgresql/data
+      - api_postgres:/var/lib/postgresql/data
     networks:
-      - snooz-network
+      - api-network
 
 networks:
-  snooz-network:
+  api-network:
     driver: bridge
 
 volumes:
-  snooz_backend: {}
+  api_postgres: {}
