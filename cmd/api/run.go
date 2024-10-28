@@ -22,7 +22,8 @@ func run(
 	)
 	defer cancel()
 
-	//Uncomment for postgres config
+	//Uncomment for postgres config and migrations
+
 	//sslEnabled := common.BoolEnv(getEnv, "SSL_ENABLED", false)
 	//dbConfig := database.NewDatabase(sslEnabled)
 	//db, err := dbConfig.OpenDB("postgres")
@@ -47,7 +48,7 @@ func run(
 		config: apiutils.NewApiConfig(getEnv, "API_PORT"),
 	}
 
-	httpServer := newServer(
+	httpServer := app.newServer(
 		app.config.Logger,
 	)
 

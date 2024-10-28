@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func addRoutesV1(
+func (app *application) addRoutesV1(
 	mux *http.ServeMux,
 ) {
 

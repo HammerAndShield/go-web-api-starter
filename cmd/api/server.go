@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-func newServer(
+func (app *application) newServer(
 	logger *slog.Logger,
 ) http.Handler {
 	v1Mux := http.NewServeMux()
 
-	addRoutesV1(v1Mux)
+	app.addRoutesV1(v1Mux)
 
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", v1Mux)
