@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"go-web-api-starter/internal/common"
+	"go-web-api-starter/internal/apiutils"
 	"os"
 	"time"
 )
@@ -39,8 +39,8 @@ func NewDatabase(sslEnabled bool) *SqlDbConfig {
 
 	return &SqlDbConfig{
 		Dsn:          dsn,
-		MaxOpenConns: common.IntEnv(os.Getenv, "DB_MAX_OPEN_CONNS", 100),
-		MaxIdleConns: common.IntEnv(os.Getenv, "DB_MAX_IDLE_CONNS", 50),
+		MaxOpenConns: apiutils.IntEnv(os.Getenv, "DB_MAX_OPEN_CONNS", 100),
+		MaxIdleConns: apiutils.IntEnv(os.Getenv, "DB_MAX_IDLE_CONNS", 50),
 		MaxIdleTime:  30 * time.Minute,
 	}
 }

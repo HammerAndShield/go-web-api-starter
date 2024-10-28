@@ -1,7 +1,6 @@
 package apiutils
 
 import (
-	"go-web-api-starter/internal/common"
 	"go-web-api-starter/internal/vcs"
 	"log/slog"
 	"os"
@@ -38,10 +37,10 @@ func WithCorsOptions(trustedOrigins []string) Option {
 }
 
 func NewApiConfig(getEnv func(string) string, portKey string, opts ...Option) *ApiConfig {
-	env := common.StringEnv(getEnv, "ENV", "dev")
+	env := StringEnv(getEnv, "ENV", "dev")
 
 	cfg := &ApiConfig{
-		Port:        common.IntEnv(getEnv, portKey, 8080),
+		Port:        IntEnv(getEnv, portKey, 8080),
 		Env:         env,
 		Logger:      slog.New(slog.NewJSONHandler(os.Stdout, nil)),
 		Version:     vcs.Version(),

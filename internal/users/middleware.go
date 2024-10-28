@@ -1,52 +1,18 @@
 package users
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"go-web-api-starter/internal/apiutils"
 	"go-web-api-starter/internal/database"
-	"go-web-api-starter/internal/jwtauth"
+	"go-web-api-starter/internal/jwt"
 	"log/slog"
 	"net/http"
 	"strings"
 )
 
 //region user auth and context setting middleware
-
-type contextKey string
-
-const userContextKey = contextKey("user")
-
-// contextSetUser associates the provided *data.User with the *http.Request using Context.
-// It can be later retrieved in other parts of the code that have access to this http.Request using contextGetUser.
-// This operation does not modify the incoming http.Request but instead returns a new http.Request
-// with the new Context. The original http.Request should be discarded and the returned http.Request should be used thereafter.
-func contextSetUser(r *http.Request, user *User) *http.Request {
-	ctx := context.WithValue(r.Context(), userContextKey, user)
-	return r.WithContext(ctx)
-}
-
-// ContextGetUser retrieves the *data.User associated with the *http.Request.
-// This method will panic with the message "missing user value in request context"
-// if no user value is available in the request context. This could happen if the contextSetUser method
-// was not called to associate a User value with this request, or if the value was associated
-// but is not of the expected *data.User type.
-func ContextGetUser(r *http.Request) *User {
-	user, ok := r.Context().Value(userContextKey).(*User)
-	if !ok {
-		panic("missing user value in request context")
-	}
-
-	return user
-}
-
-func ContextGetUserId(r *http.Request) uuid.UUID {
-	user := ContextGetUser(r)
-	return user.ID
-}
 
 type userGetter interface {
 	GetById(id uuid.UUID) (*User, error)
@@ -100,11 +66,11 @@ func Authenticate(
 			if err != nil {
 				message := ""
 				switch {
-				case errors.Is(err, jwtauth.ErrExpiredToken):
+				case errors.Is(err, jwt.ErrExpiredToken):
 					message = "token is expired"
-				case errors.Is(err, jwtauth.ErrInvalidIssuer):
+				case errors.Is(err, jwt.ErrInvalidIssuer):
 					message = "invalid issuer on jwt"
-				case errors.Is(err, jwtauth.ErrEmptySubject):
+				case errors.Is(err, jwt.ErrEmptySubject):
 					message = "the jwt has no subject"
 				}
 
@@ -129,9 +95,7 @@ func Authenticate(
 			if err != nil {
 				switch {
 				case errors.Is(err, database.ErrRecordNotFound):
-					// If the user does not exist, it's because of an issue with the webhook
-					// We know the user is legitimate, because it's signed with the supabase jwt secret
-					// Therefor we add them to the database, and authenticate
+					// If the user does not exist, but the JWT is valid, we can insert them into the database
 					email := claims["email"].(string)
 					user, err = insertAndRetrieveUnknownUser(userGetterInserter, email, userUuid)
 					if err != nil {

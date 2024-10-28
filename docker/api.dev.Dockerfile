@@ -17,4 +17,4 @@ RUN go mod download
 COPY .. .
 
 # Command to run Air for hot reloading
-CMD ["air", "-c", ".air.toml"]
+CMD ["air", "-c", "./docker/air.toml"]

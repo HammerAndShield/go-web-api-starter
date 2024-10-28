@@ -5,27 +5,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserInserter interface {
-	Insert(user *User) error
-}
-
-type UserUpdater interface {
-	UpdateEmail(user *User) error
-}
-
-type UserDeleter interface {
-	Delete(id uuid.UUID, delEmail string) error
-}
-
-type UserGetter interface {
-	GetById(id uuid.UUID) (*User, error)
-}
-
 type userRepository interface {
-	UserInserter
-	UserUpdater
-	UserDeleter
-	UserGetter
+	GetById(id uuid.UUID) (*User, error)
+	Delete(id uuid.UUID, delEmail string) error
+	UpdateEmail(user *User) error
+	Insert(user *User) error
 }
 
 // UserService aggregates the methods a user may need to operate over the usersrepository.

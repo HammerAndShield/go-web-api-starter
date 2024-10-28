@@ -16,7 +16,7 @@ RUN go mod download
 COPY .. .
 
 # Build the specific service
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -a -installsuffix cgo -o main ./cmd/api
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -a -installsuffix cgo -o main ./cmd/apiutils
 
 # Final stage
 FROM --platform=$TARGETPLATFORM alpine:latest

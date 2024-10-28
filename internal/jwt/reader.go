@@ -1,4 +1,4 @@
-package jwtauth
+package jwt
 
 import (
 	"errors"
@@ -12,6 +12,8 @@ type Reader struct {
 	HmacSecret []byte
 	Issuer     string
 }
+
+type MapClaims = jwt.MapClaims
 
 // NewReader constructs a new Reader with the provided HMAC secret and issuer.
 // These values are used when reading and validating JWT tokens.
@@ -27,7 +29,7 @@ func NewReader(hmacSecret string, issuer string) (*Reader, error) {
 // returned. If the claims inside the token cannot be formatted properly as
 // jwt.MapClaims, ErrImproperClaimsFormat error is returned.
 // It is recommended to validate the returned claims via reader's ValidateClaims method.
-func (reader *Reader) Read(tokenString string) (jwt.MapClaims, error) {
+func (reader *Reader) Read(tokenString string) (MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, ErrUnexpectedSigningMethod{unexpectedValue: token.Header["alg"]}
@@ -52,7 +54,7 @@ func (reader *Reader) Read(tokenString string) (jwt.MapClaims, error) {
 // Returns appropriate errors if validation fails: ErrExpiredToken for expired tokens,
 // ErrInvalidIssuer for an incorrect issuer, ErrEmptySubject for a missing subject,
 // or a general error if the email claim is not a string.
-func (reader *Reader) ValidateClaims(claims jwt.MapClaims) error {
+func (reader *Reader) ValidateClaims(claims MapClaims) error {
 	expiration, err := claims.GetExpirationTime()
 	if err != nil {
 		return fmt.Errorf("failed to get expiration time from claims: %w", err)

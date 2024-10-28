@@ -45,8 +45,6 @@ func Serve(
 
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
-		cancel()
-		<-errCh
 		return err
 	}
 

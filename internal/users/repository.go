@@ -179,7 +179,7 @@ func (m UserPsqlRepo) Delete(id uuid.UUID, delEmail string) error {
 	return nil
 }
 
-func (m RolePsqlRepo) GetRoleForUser(userID uuid.UUID) (*Role, error) {
+func (m UserPsqlRepo) GetRoleForUser(userID uuid.UUID) (*Role, error) {
 	query := `SELECT roles.name, permissions.code
               FROM roles
               INNER JOIN roles_permissions ON roles_permissions.role_id = roles.id
@@ -216,7 +216,7 @@ func (m RolePsqlRepo) GetRoleForUser(userID uuid.UUID) (*Role, error) {
 	return role, nil
 }
 
-func (m RolePsqlRepo) UpdateRoleForUser(userID uuid.UUID, roleName string) error {
+func (m UserPsqlRepo) UpdateRoleForUser(userID uuid.UUID, roleName string) error {
 	query := `UPDATE users SET role_id = (SELECT id FROM roles WHERE name = $2) WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

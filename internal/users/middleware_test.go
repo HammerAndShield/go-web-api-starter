@@ -3,10 +3,9 @@ package users
 import (
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"go-web-api-starter/internal/database"
-	"go-web-api-starter/internal/jwtauth"
+	"go-web-api-starter/internal/jwt"
 	"go-web-api-starter/internal/testutils"
 	"io"
 	"log/slog"
@@ -119,7 +118,7 @@ func TestAuthenticateExpiredToken(t *testing.T) {
 			return jwt.MapClaims{}, nil
 		},
 		ValidateClaimsFunc: func(claims jwt.MapClaims) error {
-			return jwtauth.ErrExpiredToken
+			return jwt.ErrExpiredToken
 		},
 	}
 
@@ -138,7 +137,7 @@ func TestAuthenticateInvalidIssuer(t *testing.T) {
 			return jwt.MapClaims{}, nil
 		},
 		ValidateClaimsFunc: func(claims jwt.MapClaims) error {
-			return jwtauth.ErrInvalidIssuer
+			return jwt.ErrInvalidIssuer
 		},
 	}
 
@@ -157,7 +156,7 @@ func TestAuthenticateEmptySubject(t *testing.T) {
 			return jwt.MapClaims{}, nil
 		},
 		ValidateClaimsFunc: func(claims jwt.MapClaims) error {
-			return jwtauth.ErrEmptySubject
+			return jwt.ErrEmptySubject
 		},
 	}
 
